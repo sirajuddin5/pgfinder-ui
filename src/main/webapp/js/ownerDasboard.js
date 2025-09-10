@@ -1,201 +1,150 @@
-/*$(document).ready(function () {
-   alert("login page")
-    // Toggle password visibility
-    $("#togglePassword").on("click", function () {
-        const passwordField = $("#passwordHash");
-        const type = passwordField.attr("type") === "password" ? "text" : "password";
-        passwordField.attr("type", type);
-        $(this).toggleClass("fa-eye fa-eye-slash");
-    });
+/*<script>
+    // Add smooth scrolling and enhanced interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add loading animation delay to sections
+        const sections = document.querySelectorAll('.section, .stat-card');
+        sections.forEach((section, index) => {
+            section.style.animationDelay = `${index * 0.1}s`;
+        });
 
-    // Submit login form
-    $("#loginForm").on("submit", function (event) {
-        event.preventDefault();
+        // Add click effects to buttons
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    background: rgba(255, 255, 255, 0.5);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s ease-out;
+                    pointer-events: none;
+                `;
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
 
-        const identifier = $("#username").val().trim(); // can be username or email
-        const password = $("#passwordHash").val().trim();
-       
-        if (identifier === "") {
-            showError("Username or Email is required.");
-            $("#identifier").focus();
-            return;
-        }
+        // Add hover effects to table rows
+        const tableRows = document.querySelectorAll('tbody tr');
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(5px)';
+            });
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
 
-        if (password === "") {
-            showError("Password is required.");
-            $("#passwordHash").focus();
-            return;
-        }
-
-        const inputParams = {
-            usernameOrEmail: identifier,
-            password: password,
-           
-        };
-
-       
-
-        const submitBtn = $("#submitBtn");
-        const spinner = $(".loading-spinner");
-        const buttonText = submitBtn.find("span");
-
-        submitBtn.prop("disabled", true);
-        spinner.show();
-        buttonText.text("Logging In...");
-
-        $.ajax({
-            type: "POST",
-            url: "pgFinderRest/login",
-            data: JSON.stringify(inputParams),
-            contentType: "application/json; charset=utf-8",
-            success: function (response) {
-                submitBtn.prop("disabled", false);
-                spinner.hide();
-                buttonText.text("Login");
-
-                if (response.success && response.data && response.data.roles) {
-                    showSuccess("Login successful!");
-
-					const userRoles = response.data.roles;
-				  
-
-					setTimeout(() => {
-					        if (userRoles.includes("OWNER")) {
-					            window.location.href = "ownerDasboard";
-					        } else if (userRoles.includes("USER") || userRoles.includes("TENANT")) {
-					            window.location.href = "tenantDashboard";
-					        } else if (userRoles.includes("ADMIN")) {
-					            window.location.href = "adminDashboard";
-					        } else {
-					            window.location.href = "/dashboard";
-					        }
-					    }, 1500);
-                } else {
-                    showError(response.message || "Login failed. Invalid credentials.");
-                }
-            },
-            error: function (xhr, status, error) {
-                submitBtn.prop("disabled", false);
-                spinner.hide();
-                buttonText.text("Login");
-
-                const errorMessage = xhr.responseJSON?.message || error || "Login failed. Please try again.";
-                showError(errorMessage);
+        // Real-time clock in header (optional enhancement)
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const clockElement = document.getElementById('clock');
+            if (clockElement) {
+                clockElement.textContent = timeString;
             }
-        });
+        }
+        
+        // Update clock every second if element exists
+        if (document.getElementById('clock')) {
+            setInterval(updateClock, 1000);
+            updateClock();
+        }
     });
 
-    // Floating animation for background particles
-    $(".particle").each(function (index) {
-        $(this).css("animation-delay", index * 0.5 + "s");
+    // CSS for ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+*/
+
+$(document).ready(function () {
+    // Add loading animation delay to sections
+    $('.section, .stat-card').each(function (index) {
+        $(this).css('animation-delay', (index * 0.1) + 's');
     });
 
-    // Success toast
-    function showSuccess(message) {
-        $(".notification").remove();
+    // Add click ripple effect to buttons
+    $('.btn').on('click', function (e) {
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
 
-        const notification = $(`
-            <div class="notification success-notification" style="
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #10b981, #059669);
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-                z-index: 1000;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                max-width: 400px;
-                word-wrap: break-word;
-            ">
-                <i class="fas fa-check-circle" style="font-size: 1.2rem;"></i>
-                <span>${message}</span>
-                <button class="notification-close" style="
-                    background: none;
-                    border: none;
-                    color: white;
-                    cursor: pointer;
-                    margin-left: auto;
-                    padding: 0;
-                    font-size: 1.2rem;
-                ">&times;</button>
-            </div>
-        `);
-
-        $("body").append(notification);
-
-        notification.find(".notification-close").on("click", function () {
-            notification.css("transform", "translateX(100%)");
-            setTimeout(() => notification.remove(), 300);
+        const $ripple = $('<span></span>').css({
+            position: 'absolute',
+            width: size + 'px',
+            height: size + 'px',
+            left: x + 'px',
+            top: y + 'px',
+            background: 'rgba(255, 255, 255, 0.5)',
+            borderRadius: '50%',
+            transform: 'scale(0)',
+            animation: 'ripple 0.6s ease-out',
+            pointerEvents: 'none'
         });
 
-        setTimeout(() => {
-            notification.css("transform", "translateX(0)");
-        }, 100);
+        $(this).css({
+            position: 'relative',
+            overflow: 'hidden'
+        }).append($ripple);
 
-        setTimeout(() => {
-            notification.css("transform", "translateX(100%)");
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
+        setTimeout(function () {
+            $ripple.remove();
+        }, 600);
+    });
+
+    // Add hover effects to table rows
+    $('tbody tr').hover(
+        function () { $(this).css('transform', 'translateX(5px)'); },
+        function () { $(this).css('transform', 'translateX(0)'); }
+    );
+
+    // Real-time clock in header
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        $('#clock').text(timeString);
     }
 
-    // Error toast
-    function showError(message) {
-        $(".notification").remove();
-
-        const notification = $(`
-            <div class="notification error-notification" style="
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
-                z-index: 1000;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                max-width: 400px;
-                word-wrap: break-word;
-            ">
-                <i class="fas fa-exclamation-circle" style="font-size: 1.2rem;"></i>
-                <span>${message}</span>
-                <button class="notification-close" style="
-                    background: none;
-                    border: none;
-                    color: white;
-                    cursor: pointer;
-                    margin-left: auto;
-                    padding: 0;
-                    font-size: 1.2rem;
-                ">&times;</button>
-            </div>
-        `);
-
-        $("body").append(notification);
-
-        notification.find(".notification-close").on("click", function () {
-            notification.css("transform", "translateX(100%)");
-            setTimeout(() => notification.remove(), 300);
-        });
-
-        setTimeout(() => {
-            notification.css("transform", "translateX(0)");
-        }, 100);
-
-        setTimeout(() => {
-            notification.css("transform", "translateX(100%)");
-            setTimeout(() => notification.remove(), 300);
-        }, 5000);
+    if ($('#clock').length) {
+        setInterval(updateClock, 1000);
+        updateClock();
     }
 });
-*/

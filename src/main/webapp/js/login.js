@@ -1,43 +1,50 @@
 $(document).ready(function () {
-   alert("login page")
+    alert("Welcome to login page!!");
+
     // Toggle password visibility
     $("#togglePassword").on("click", function () {
-        const passwordField = $("#passwordHash");
-        const type = passwordField.attr("type") === "password" ? "text" : "password";
+        var passwordField = $("#passwordHash");
+        var type = passwordField.attr("type") === "password" ? "text" : "password";
+        console.log("Toggling password visibility. New type:", type);
         passwordField.attr("type", type);
         $(this).toggleClass("fa-eye fa-eye-slash");
     });
 
     // Submit login form
     $("#loginForm").on("submit", function (event) {
+        console.log("Login form submitted.");
         event.preventDefault();
 
-        const identifier = $("#username").val().trim(); // can be username or email
-        const password = $("#passwordHash").val().trim();
-       
+        var identifier = $("#username").val().trim(); // can be username or email
+        var password = $("#passwordHash").val().trim();
+
+        console.log("Identifier entered:", identifier);
+        console.log("Password length:", password.length);
+
         if (identifier === "") {
+            console.warn("Validation failed: Identifier is empty");
             showError("Username or Email is required.");
             $("#identifier").focus();
             return;
         }
 
         if (password === "") {
+            console.warn("Validation failed: Password is empty");
             showError("Password is required.");
             $("#passwordHash").focus();
             return;
         }
 
-        const inputParams = {
+        var inputParams = {
             usernameOrEmail: identifier,
             password: password,
-           
         };
 
-       
+        console.log("Sending login request with inputParams:", inputParams);
 
-        const submitBtn = $("#submitBtn");
-        const spinner = $(".loading-spinner");
-        const buttonText = submitBtn.find("span");
+        var submitBtn = $("#submitBtn");
+        var spinner = $(".loading-spinner");
+        var buttonText = submitBtn.find("span");
 
         submitBtn.prop("disabled", true);
         spinner.show();
@@ -49,28 +56,39 @@ $(document).ready(function () {
             data: JSON.stringify(inputParams),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
+                console.log("AJAX login response received:", response);
+
                 submitBtn.prop("disabled", false);
                 spinner.hide();
                 buttonText.text("Login");
 
                 if (response.success && response.data && response.data.roles) {
                     showSuccess("Login successful!");
+                    console.log("Login success. User roles:", response.data.roles);
 
-					const userRoles = response.data.roles;
-				  
+                    // ✅ Clear input fields after success
+                    $("#username").val("");
+                    $("#passwordHash").val("");
 
-					setTimeout(() => {
-					        if (userRoles.includes("OWNER")) {
-					            window.location.href = "ownerDasboard";
-					        } else if (userRoles.includes("USER") || userRoles.includes("TENANT")) {
-					            window.location.href = "tenantDashboard";
-					        } else if (userRoles.includes("ADMIN")) {
-					            window.location.href = "adminDashboard";
-					        } else {
-					            window.location.href = "/dashboard";
-					        }
-					    }, 1500);
+                    var userRoles = response.data.roles;
+
+                    setTimeout(() => {
+                        if (userRoles.includes("OWNER")) {
+                            console.log("Redirecting to ownerDasboard");
+                            window.location.href = "ownerDasboard";
+                        } else if (userRoles.includes("USER") || userRoles.includes("TENANT")) {
+                            console.log("Redirecting to tenantDashboard");
+                            window.location.href = "tenantDashboard";
+                        } else if (userRoles.includes("ADMIN")) {
+                            console.log("Redirecting to adminDashboard");
+                            window.location.href = "adminDashboard";
+                        } else {
+                            console.log("Redirecting to /dashboard");
+                            window.location.href = "/dashboard";
+                        }
+                    }, 1500);
                 } else {
+                    console.warn("Login failed with message:", response.message);
                     showError(response.message || "Login failed. Invalid credentials.");
                 }
             },
@@ -79,7 +97,19 @@ $(document).ready(function () {
                 spinner.hide();
                 buttonText.text("Login");
 
-                const errorMessage = xhr.responseJSON?.message || error || "Login failed. Please try again.";
+                let errorMessage = "Login failed. Please try again.";
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                } else if (error) {
+                    errorMessage = error;
+                }
+
+                console.error("AJAX login error:", {
+                    status: status,
+                    error: error,
+                    xhr: xhr
+                });
+
                 showError(errorMessage);
             }
         });
@@ -87,45 +117,19 @@ $(document).ready(function () {
 
     // Floating animation for background particles
     $(".particle").each(function (index) {
+        console.log("Setting animation delay for particle", index);
         $(this).css("animation-delay", index * 0.5 + "s");
     });
 
-    // Success toast
+    // Success Notification
     function showSuccess(message) {
+        console.log("Showing success message:", message);
         $(".notification").remove();
 
-        const notification = $(`
-            <div class="notification success-notification" style="
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #10b981, #059669);
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-                z-index: 1000;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                max-width: 400px;
-                word-wrap: break-word;
-            ">
-                <i class="fas fa-check-circle" style="font-size: 1.2rem;"></i>
-                <span>${message}</span>
-                <button class="notification-close" style="
-                    background: none;
-                    border: none;
-                    color: white;
-                    cursor: pointer;
-                    margin-left: auto;
-                    padding: 0;
-                    font-size: 1.2rem;
-                ">&times;</button>
-            </div>
-        `);
+        var notification = $('<div/>', { class: 'notification success-notification' })
+            .append($('<i/>', { class: 'fas fa-check-circle', style: 'font-size: 1.2rem;' }))
+            .append($('<span/>').text(message))
+            .append($('<button/>', { class: 'notification-close', html: '&times;' }));
 
         $("body").append(notification);
 
@@ -134,52 +138,22 @@ $(document).ready(function () {
             setTimeout(() => notification.remove(), 300);
         });
 
-        setTimeout(() => {
-            notification.css("transform", "translateX(0)");
-        }, 100);
-
+        setTimeout(() => notification.css("transform", "translateX(0)"), 100);
         setTimeout(() => {
             notification.css("transform", "translateX(100%)");
             setTimeout(() => notification.remove(), 300);
         }, 3000);
     }
 
-    // Error toast
+    // Error Notification
     function showError(message) {
+        console.log("Showing error message:", message);
         $(".notification").remove();
 
-        const notification = $(`
-            <div class="notification error-notification" style="
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
-                z-index: 1000;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                max-width: 400px;
-                word-wrap: break-word;
-            ">
-                <i class="fas fa-exclamation-circle" style="font-size: 1.2rem;"></i>
-                <span>${message}</span>
-                <button class="notification-close" style="
-                    background: none;
-                    border: none;
-                    color: white;
-                    cursor: pointer;
-                    margin-left: auto;
-                    padding: 0;
-                    font-size: 1.2rem;
-                ">&times;</button>
-            </div>
-        `);
+        var notification = $('<div/>', { class: 'notification error-notification' })
+            .append($('<i/>', { class: 'fas fa-exclamation-circle', style: 'font-size: 1.2rem;' }))
+            .append($('<span/>').text(message))
+            .append($('<button/>', { class: 'notification-close', html: '&times;' }));
 
         $("body").append(notification);
 
@@ -188,10 +162,7 @@ $(document).ready(function () {
             setTimeout(() => notification.remove(), 300);
         });
 
-        setTimeout(() => {
-            notification.css("transform", "translateX(0)");
-        }, 100);
-
+        setTimeout(() => notification.css("transform", "translateX(0)"), 100);
         setTimeout(() => {
             notification.css("transform", "translateX(100%)");
             setTimeout(() => notification.remove(), 300);

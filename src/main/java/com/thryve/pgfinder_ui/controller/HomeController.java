@@ -45,9 +45,6 @@ public class HomeController {
 	    System.out.println("response :"+ response);
 	    model.addAttribute("response", response);
 	    
-	    
-
-		
         return "ownerDasboard"; 
     }
 	
@@ -64,6 +61,21 @@ public class HomeController {
 	@GetMapping("/login")
     public String login() {
         return "login";  
+    }
+	
+	@GetMapping("/addNewProperty")
+    public String addNewProperty(Model model) {
+		String token = session.getAttribute("token") == null ? "": session.getAttribute("token").toString();
+		 model.addAttribute("token", token); System.out.println("token  : " + token);
+	    if (token.equals("")) return "login";
+	    
+	    APIResponse response = new APIResponse();
+	    TokenRequest tokenRequest = new TokenRequest();
+	    tokenRequest.setToken(token);
+	    
+	    response = pgFinderService.getOwner(token); System.out.println("response :"+ response);
+	    model.addAttribute("response", response);
+        return "addNewProperty";  
     }
 	
 

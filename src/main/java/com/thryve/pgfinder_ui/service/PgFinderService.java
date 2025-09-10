@@ -2,7 +2,6 @@ package com.thryve.pgfinder_ui.service;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,11 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thryve.pgfinder_ui.constants.PgFinderConstants;
 import com.thryve.pgfinder_ui.model.APIResponse;
-import com.thryve.pgfinder_ui.model.TokenRequest;
 
-import jakarta.servlet.http.HttpSession;
 
 
 @Service
@@ -71,6 +69,59 @@ public class PgFinderService {
 		return response;
 	}
 	
+    // For createProperty
+ /*   public static APIResponse createProperty(Map<String, Object> requestParams) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            String url = PgFinderConstants.CREATE_PG;
+            HttpEntity<Object> requestEntity = new HttpEntity<>(requestParams);System.out.println("Request createPropertyService: "+requestEntity);
+
+            ResponseEntity<Map> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
+
+            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+                return convertMapToObject(responseEntity.getBody());
+            }
+
+            return new APIResponse(); // Default response on failure
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new APIResponse(); // Default response on error
+        }
+    }*/
+	
+	public static APIResponse createProperty(Map<String, Object> requestParams, String token) {
+	    try {
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_JSON);
+	        headers.set("Authorization", "Bearer " + token);
+
+	        String url = PgFinderConstants.CREATE_PG;
+
+	        // ❌ Don't convert to String manually
+	        HttpEntity<Map<String,Object>> requestEntity = new HttpEntity<>(requestParams, headers);
+	        System.out.println("requestEntity createPropertyService: " + requestEntity);
+
+	        ResponseEntity<Map> responseEntity =
+	                restTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
+	        System.out.println("responseEntity createPropertyService: " + responseEntity);
+	        
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                return convertMapToObject1(responseEntity.getBody());
+            }
+
+	        return new APIResponse();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new APIResponse();
+	    }
+	}
+
+
+
+	
+	
 //	public static APIResponse paymentAction(Map<String, Object> fetchAPIRequest) {
 //		HttpHeaders headers = new HttpHeaders();
 //		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -103,28 +154,44 @@ public class PgFinderService {
 	}
 
 	
+/*	public static APIResponse convertMapToObject(Map<String, Object> inputMap) {
+	    APIResponse response = new APIResponse();
+	    try {
+	        String status = inputMap.get("status") == null ? "" : inputMap.get("status").toString();
+	        response.setSuccess("success".equalsIgnoreCase(status));
+	        response.setMessage(inputMap.get("message") == null ? "" : inputMap.get("message").toString());	        
+	        response.setData(inputMap.get("result"));
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.setSuccess(false);
+	        response.setMessage("Error while processing the response");
+	        response.setData(null);
+	    }
+	    return response;
+	}*/
+	
 	public static APIResponse convertMapToObject(Map<String, Object> inputMap) {
 	    APIResponse response = new APIResponse();
 	    try {
-	        // Fix 1: Look for "success" key instead of "status"
+	        // Fix: get "success" boolean directly
 	        Object successObj = inputMap.get("success");
-	        if (successObj instanceof Boolean) {
-	            response.setSuccess((Boolean) successObj);
-	        } else if (successObj != null) {
-	            // If it's a string, check if it's "true"
-	            response.setSuccess("true".equalsIgnoreCase(successObj.toString()));
-	        } else {
-	            response.setSuccess(false);
-	        }
+	        response.setSuccess(successObj != null && Boolean.parseBoolean(successObj.toString()));
 
+	        // Fix: get message from "message"
 	        response.setMessage(inputMap.get("message") == null ? "" : inputMap.get("message").toString());
-	        
-	        // Fix 2: Look for "data" key instead of "result" 
+
+	        // Fix: get "data" instead of "result"
 	        response.setData(inputMap.get("data"));
-	        
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
+	        response.setSuccess(false);
+	        response.setMessage("Error while processing the response");
+	        response.setData(null);
 	    }
 	    return response;
 	}
+
+
 }
