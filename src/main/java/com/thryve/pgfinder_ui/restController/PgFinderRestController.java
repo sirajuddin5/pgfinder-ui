@@ -1,5 +1,7 @@
 package com.thryve.pgfinder_ui.restController;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thryve.pgfinder_ui.model.APIResponse;
+import com.thryve.pgfinder_ui.model.FetchAPIRequest;
+import com.thryve.pgfinder_ui.model.Filter;
+import com.thryve.pgfinder_ui.model.GlobalOperator;
+import com.thryve.pgfinder_ui.model.PageRequestDTO;
 import com.thryve.pgfinder_ui.service.PgFinderService;
 
 import jakarta.servlet.http.HttpSession;
@@ -82,43 +88,57 @@ public class PgFinderRestController {
 	            if (tokenObj != null) {
 	                String token = tokenObj.toString();
 	                System.out.println("Login Token : " + token);
-	                session.setAttribute("token", token);  // ✅ Session me save
+	                session.setAttribute("token", token);  
 	            }
 	        }
 	    }
 	    return response;
 	}
 
-	
-/*    @PostMapping("/createProperty")
-    public ResponseEntity<?> createProperty(@RequestHeader("Authorization") String authHeader, @RequestBody Map<String, Object> requestParams) {
-        String token = authHeader.replace("Bearer ", "");
-        session.getAttribute("token");
-        System.out.println("requestParams : " + requestParams);
-        
-        APIResponse response = PgFinderService.createProperty(requestParams);
-        System.out.println("response RestController: " + response);
-        
-        return ResponseEntity.ok(response);
-    }*/
-	
 	@PostMapping("/createProperty")
 	public ResponseEntity<?> createProperty(
 	        @RequestHeader("Authorization") String authHeader,
 	        @RequestBody Map<String, Object> requestParams) {
 	    
 	    String token = authHeader.replace("Bearer ", "");
-	    session.setAttribute("token", token);  // optional, agar baad me use karna ho
-	    
+	    session.setAttribute("token", token); 	    
 	    System.out.println("requestParams : " + requestParams);
 	    
-	    APIResponse response = PgFinderService.createProperty(requestParams, token); // ✅ token bhejo
+	    APIResponse response = PgFinderService.createProperty(requestParams, token); 
 	    System.out.println("response RestController: " + response);
 	    
 	    return ResponseEntity.ok(response);
 	}
 
+    @PostMapping("/getAllPGList")
+    public APIResponse activeCounselList(@RequestBody Map<String, Object> requestParams) {    	
+    	  System.out.println("requestParams : " + requestParams);
+          int pageSize = requestParams.get("pageSize") != null ? Integer.parseInt(requestParams.get("pageSize").toString()): 10; 
+          int pageNum = requestParams.get("pageNumber") != null? Integer.parseInt(requestParams.get("pageNumber").toString()): 0; System.out.println("page number: " + pageNum);
 
+          APIResponse response = new APIResponse();
+          String name = requestParams.get("name") != null ? requestParams.get("name").toString() : ""; System.out.println("PGname :   " + name);
+
+          String token = (String) session.getAttribute("token");
+        
+          FetchAPIRequest fetchAPIRequest = new FetchAPIRequest();
+          List<Filter> filterList = new ArrayList<>();
+          if(name.length() > 0)filterList.add(new Filter().setKey("name").setValue(name).setOperation(Filter.Operation.LIKE)); 
+  
+          System.out.println("Filter List:   " + filterList);
+          fetchAPIRequest.setFilterList(filterList);
+          fetchAPIRequest.setGlobalOperator(GlobalOperator.AND);
+          PageRequestDTO pageRequestDTO = new PageRequestDTO();
+          pageRequestDTO.setPageNumber(pageNum);
+          pageRequestDTO.setPageSize(pageSize);
+          pageRequestDTO.setSort("ASC");
+          pageRequestDTO.setSortByColumn("expireDate");
+          fetchAPIRequest.setPageRequestDTO(pageRequestDTO);
+          
+          response = PgFinderService.getAllPG(fetchAPIRequest, token);          
+          System.out.println("response: " + response);
+          return response;
+    }
 	
 	
 
