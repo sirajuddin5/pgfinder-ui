@@ -119,6 +119,10 @@ public class HomeController {
 	    
         return "pgList";  
     }
-	
+
+	@GetMapping("/fetchPG")
+    public String fetchPG() {
+        return "fetchPG";  
+    }
 
 }

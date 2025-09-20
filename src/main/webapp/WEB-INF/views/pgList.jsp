@@ -481,7 +481,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 text-center">
-                        <div class="show-info">Showing <span id="from">1</span> to <span id="to">10</span> of ${fn:length(pgList)} items</div>
+                        <div class="show-info">Showing <span id="from">1</span> to <span id="to">10</span> of ${fetchUsersResult.totalElements} items</div>
                     </div>
                     <div class="col-md-4">
                         <nav aria-label="Page navigation">
