@@ -3,6 +3,7 @@ package com.thryve.pgfinder_ui.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -121,8 +122,42 @@ public class HomeController {
     }
 
 	@GetMapping("/fetchPG")
-    public String fetchPG() {
+    public String fetchPG(Model model) {
+		String token;
+		if (session.getAttribute("token") == null)
+			token = "";
+		else
+			token = session.getAttribute("token").toString();
+	    System.out.println("token  : " + token);
+	    if (token.equals("")) return "login";
+
+        FetchAPIRequest fetchAPIRequest = new FetchAPIRequest();
+        List<Filter> filterList = new ArrayList<>();
+        fetchAPIRequest.setFilterList(filterList);
+
+        GlobalOperator globalOperator = GlobalOperator.AND;
+        fetchAPIRequest.setGlobalOperator(globalOperator);
+
+        PageRequestDTO pageRequestDTO = new PageRequestDTO();
+        pageRequestDTO.setPageNumber(0);
+        pageRequestDTO.setPageSize(10);
+        pageRequestDTO.setSort("ASC");
+        pageRequestDTO.setSortByColumn("id");
+
+        fetchAPIRequest.setPageRequestDTO(pageRequestDTO);
+
+        APIResponse fetchUsersResponse = pgFinderService.getAllPG(fetchAPIRequest, token);System.out.println("fetchUsersResponseService :"+ fetchUsersResponse);
+        HashMap<String, Object> fetchUsersData = (HashMap<String, Object>) fetchUsersResponse.getData(); System.out.println("fetchUsersData :"+ fetchUsersData);       
+        List<Map<String, Object>> fetchUsersDataContentList = (List<Map<String, Object>>) fetchUsersData.get("content");
+       // Map<String, Object> fetchUsersDataContent = fetchUsersDataContentList.get(0);
+        model.addAttribute("fetchUsersDataContentList", fetchUsersDataContentList);  System.out.println("fetchUsersDataContentList" + fetchUsersDataContentList);
+  
         return "fetchPG";  
+    }
+	
+	@GetMapping("/viewPGDetails")
+    public String viewPGDetails() {
+        return "viewPGDetails";  
     }
 
 }

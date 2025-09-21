@@ -1,4 +1,4 @@
-
+/*
         $(document).ready(function() {
 			const pgData = [
 			        {
@@ -321,4 +321,131 @@
             timeout = setTimeout(() => func.apply(context, args), wait);
         };
     }
+	});*/
+	
+
+	$(document).ready(function () {
+	    // Trigger filtering/sorting when any filter/search input changes
+	    $('#searchInput, #locationFilter, #rentFilter, #genderFilter, #amenityFilter, #sortBy').on('input change', function () {
+	        filterAndSortPGs();
+	    });
+
+	    // Run initially to show all PGs
+	    filterAndSortPGs();
+		
+		
+		$('#viewDetailsModal').on('show.bs.modal', function (event) {
+		    
+		    // Extract information from data attributes
+		    var name = button.data('pgname');
+		    var description = button.data('description');
+		    var gender = button.data('gender');
+		    var city = button.data('city');
+		    var price = button.data('baseprice');
+		    var address = button.data('address');
+		    var amenities = button.data('amenities');
+		    
+		    // Populate the modal with the corresponding information
+		    $('#modalPGName').text(name);
+		    $('#modalDescription').text(description);
+		    $('#modalGender').text(gender);
+		    $('#modalCity').text(city);
+		    $('#modalBasePrice').text("₹ " + price + " / month");
+		    $('#modalAddress').text(address);
+		    
+		    // Display amenities list
+		    var amenitiesList = amenities ? amenities.join(', ') : 'N/A'; 
+		    $('#modalAmenities').text(amenitiesList);
+		});
+
+
 	});
+
+	function filterAndSortPGs() {
+	    let searchTerm = $('#searchInput').val().toLowerCase().trim();
+	    let locationFilter = $('#locationFilter').val().toLowerCase();
+	    let rentFilter = parseInt($('#rentFilter').val()) || null;
+	    let genderFilter = $('#genderFilter').val().toLowerCase();
+	    let amenityFilter = $('#amenityFilter').val().toLowerCase();
+	    let sortBy = $('#sortBy').val();
+
+	    let visibleCount = 0;
+
+	    $('.pg-card').each(function () {
+	        let $card = $(this);
+
+	        // Get data from DOM
+	        let name = $card.find('.pg-title').text().toLowerCase();
+	        let location = $card.find('.pg-location').text().toLowerCase();
+	        let rentText = $card.find('.pg-rent').text().replace(/[^\d]/g, ''); // remove ₹ and /month
+	        let rent = parseInt(rentText) || 0;
+	        let gender = ($card.data('gender') || '').toLowerCase(); // optional
+	        let amenities = [];
+
+	        $card.find('.amenity-tag').each(function () {
+	            amenities.push($(this).text().toLowerCase());
+	        });
+
+	        // Matching logic
+	        let matchesSearch = !searchTerm || name.includes(searchTerm) || location.includes(searchTerm);
+	        let matchesLocation = !locationFilter || location.includes(locationFilter);
+	        let matchesRent = !rentFilter || rent <= rentFilter;
+	        let matchesGender = !genderFilter || gender === genderFilter || gender === 'unisex';
+	        let matchesAmenity = !amenityFilter || amenities.includes(amenityFilter);
+
+	        if (matchesSearch && matchesLocation && matchesRent && matchesGender && matchesAmenity) {
+	            $card.show();
+	            visibleCount++;
+	        } else {
+	            $card.hide();
+	        }
+	    });
+
+	    // Sort visible cards
+	    sortCards(sortBy);
+
+	    // Update results count and no-results message
+	    $('#resultsCount').text(`Showing ${visibleCount} PG${visibleCount === 1 ? '' : 's'}`);
+
+	    if (visibleCount === 0) {
+	        $('#noResults').show();
+	    } else {
+	        $('#noResults').hide();
+	    }
+	}
+
+	function sortCards(sortBy) {
+	    let $container = $('#pgListings');
+	    let $cards = $container.find('.pg-card:visible');
+
+	    $cards.sort(function (a, b) {
+	        let $a = $(a), $b = $(b);
+
+	        let rentA = parseInt($a.find('.pg-rent').text().replace(/[^\d]/g, '')) || 0;
+	        let rentB = parseInt($b.find('.pg-rent').text().replace(/[^\d]/g, '')) || 0;
+
+	        let ratingA = parseFloat($a.find('.pg-rating span:last').text()) || 0;
+	        let ratingB = parseFloat($b.find('.pg-rating span:last').text()) || 0;
+
+	        switch (sortBy) {
+	            case 'rent-low':
+	                return rentA - rentB;
+	            case 'rent-high':
+	                return rentB - rentA;
+	            case 'rating':
+	                return ratingB - ratingA;
+	            case 'newest':
+	                return 0; // Update if you have date/id-based logic
+	            default:
+	                return 0; // No sorting
+	        }
+	    });
+
+	    // Re-append sorted cards to container
+	    $cards.detach().appendTo($container);
+	}
+
+	function viewPG(pgId) {
+	    // Redirect to viewPGDetails.jsp with query param
+	    window.location.href = 'viewPGDetails?id=' + encodeURIComponent(pgId);
+	}

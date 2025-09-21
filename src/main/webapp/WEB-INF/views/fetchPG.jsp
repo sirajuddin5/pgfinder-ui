@@ -1,4 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,10 +11,10 @@
     <title>PG Finder - Find Your Perfect Stay</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/fetchPG.css">
-
 </head>
 <body>
     <div class="container">
+
         <!-- Header -->
         <div class="header">
             <div class="logo">PG Finder</div>
@@ -97,18 +101,114 @@
 
         <!-- PG Listings -->
         <div class="pg-listings" id="pgListings">
-            <!-- PG listings will be dynamically populated here -->
-        </div>
+            <c:choose>
+                <c:when test="${not empty fetchUsersDataContentList}">
+                    <c:forEach var="pg" items="${fetchUsersDataContentList}">
+                        <!-- ✅ Added data-gender here -->
+                        <div class="pg-card" data-gender="${pg.pgType}">
+                            <div class="pg-image">🏠</div>
+                            <div class="pg-content">
+                                <div class="pg-title">${pg.name}</div>
+                                <div class="pg-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <c:out value="${pg.address.line2}, ${pg.address.city}" />
+                                </div>
+                                <div class="pg-rent">₹<fmt:formatNumber value="${pg.basePrice}" type="number" groupingUsed="true" />/month</div>
+                                <div class="pg-rating">
+                                    <span class="stars">
+                                        <c:choose>
+                                            <c:when test="${not empty pg.avgRating}">
+                                                <c:set var="fullStars" value="${fn:substringBefore(pg.avgRating, '.')}"/>
+                                                <c:forEach var="i" begin="1" end="${fullStars}">
+                                                    <i class="fas fa-star"></i>
+                                                </c:forEach>
+                                                <c:if test="${fn:contains(pg.avgRating, '.')}">
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                </c:if>
+                                                <c:set var="emptyStars" value="${5 - fullStars - (fn:contains(pg.avgRating, '.') ? 1 : 0)}"/>
+                                                <c:forEach var="i" begin="1" end="${emptyStars}">
+                                                    <i class="far fa-star"></i>
+                                                </c:forEach>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span>No Ratings</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </span>
+                                    <span><c:out value="${pg.avgRating != null ? pg.avgRating : 'N/A'}"/></span>
+                                </div>
+                                <div class="pg-amenities">
+                                    <c:forEach var="amenity" items="${pg.amenities}">
+                                        <span class="amenity-tag">${amenity}</span>
+                                    </c:forEach>
+                                </div>
+                                <!-- ✅ View Details button -->
+                                <%-- <button class="view-btn" onclick="viewPG('${pg.id}')">View Details</button> --%>
+                                
+<button type="button" class="view-btn" 
+        data-toggle="modal" 
+        data-target="#viewDetailsModal"
+        data-pgname="${pg.name}"
+        data-description="${pg.shortDescription}"
+        data-gender="${pg.pgType}"
+        data-city="${pg.address.city}"
+        data-baseprice="${pg.basePrice}"
+        data-address="${pg.address.line1}, ${pg.address.line2}, ${pg.address.city}, ${pg.address.state}, ${pg.address.country}"
+       >
+    View Details
+</button>
 
-        <!-- No Results Message -->
-        <div class="no-results" id="noResults" style="display: none;">
-            <i class="fas fa-home"></i>
-            <div>No PGs found matching your criteria</div>
-            <div style="font-size: 0.9rem; margin-top: 10px;">Try adjusting your filters or search terms</div>
+<div class="modal fade" id="viewDetailsModal" tabindex="-1" role="dialog" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">PG Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tr><th>PG Name</th><td id="modalPGName"></td></tr>
+                    <tr><th>Description</th><td id="modalDescription"></td></tr>
+                    <tr><th>Type (Gender)</th><td id="modalGender"></td></tr>
+                    <tr><th>City</th><td id="modalCity"></td></tr>
+                    <tr><th>Base Price</th><td id="modalBasePrice"></td></tr>
+                    <tr><th>Address</th><td id="modalAddress"></td></tr>
+                    <tr><th>Amenities</th><td id="modalAmenities"></td></tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
+</div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="js/fetchPG.js"></script>
+
+                                
+                            </div>
+                        </div>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <!-- ✅ Show this only if no data -->
+                    <div class="no-results" id="noResults">
+                        <i class="fas fa-home"></i>
+                        <div>No PGs found matching your criteria</div>
+                        <div style="font-size: 0.9rem; margin-top: 10px;">Try adjusting your filters or search terms</div>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/fetchPG.js"></script>
+
 </body>
 </html>
