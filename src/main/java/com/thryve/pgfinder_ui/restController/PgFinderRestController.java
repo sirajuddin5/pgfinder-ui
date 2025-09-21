@@ -114,7 +114,7 @@ public class PgFinderRestController {
     public APIResponse activeCounselList(@RequestBody Map<String, Object> requestParams) {    	
     	  System.out.println("requestParams : " + requestParams);
           int pageSize = requestParams.get("pageSize") != null ? Integer.parseInt(requestParams.get("pageSize").toString()): 10; 
-          int pageNum = requestParams.get("pageNumber") != null? Integer.parseInt(requestParams.get("pageNumber").toString()): 0; System.out.println("page number: " + pageNum);
+          int pageNum = requestParams.get("pageNumber") != null? Integer.parseInt(requestParams.get("pageNumber").toString()): 0; 
 
           APIResponse response = new APIResponse();
           String name = requestParams.get("name") != null ? requestParams.get("name").toString() : ""; System.out.println("PGname :   " + name);
@@ -132,14 +132,12 @@ public class PgFinderRestController {
           pageRequestDTO.setPageNumber(pageNum);
           pageRequestDTO.setPageSize(pageSize);
           pageRequestDTO.setSort("ASC");
-          pageRequestDTO.setSortByColumn("expireDate");
+          pageRequestDTO.setSortByColumn("id");
           fetchAPIRequest.setPageRequestDTO(pageRequestDTO);
           
           response = PgFinderService.getAllPG(fetchAPIRequest, token);          
           System.out.println("response: " + response);
           return response;
     }
-	
-	
 
 }

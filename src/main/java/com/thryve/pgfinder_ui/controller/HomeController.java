@@ -113,11 +113,9 @@ public class HomeController {
         fetchAPIRequest.setPageRequestDTO(pageRequestDTO);
 
         APIResponse fetchUsersResponse = pgFinderService.getAllPG(fetchAPIRequest, token);System.out.println("fetchUsersResponseService :"+ fetchUsersResponse);
-        HashMap<String, Object> fetchUsersResult = (HashMap<String, Object>) fetchUsersResponse.getData();
-        
+        HashMap<String, Object> fetchUsersResult = (HashMap<String, Object>) fetchUsersResponse.getData();        
         model.addAttribute("fetchUsersResult", fetchUsersResult);System.out.println("fetchUsersResult :"+ fetchUsersResult);
-	    
-	    
+	    	    
         return "pgList";  
     }
 

@@ -1,25 +1,4 @@
 	$(document).ready(function () {
-		/*$(document).on("click", ".view-details-btn", function () {
-		    var pgName = $(this).data("pgname") || "-";
-		    var description = $(this).data("description") || "-";
-		    var pgType = $(this).data("pgtype") || "-";
-		    var genderPreference = $(this).data("city") || "-"; // Assuming city as gender for demo
-		    var basePrice = $(this).data("baseprice") || "-";
-		    var address = $(this).data("address") || "-";
-
-		    // Set modal content
-		    $("#modalPgName").text(pgName);
-		    $("#modalDescription").text(description);
-		    $("#modalPgType").text(pgType);
-		    $("#modalGenderPreference").text(genderPreference); // This should be actual gender in real use
-		    $("#modalBasePrice").text(basePrice);
-		    $("#modalAddress").text(address);
-		});
-
-		// Optional: Clear modal on close
-		$('#viewDetailsModal').on('hidden.bs.modal', function () {
-		    $("#modalPgName, #modalDescription, #modalPgType, #modalGenderPreference, #modalBasePrice, #modalAddress").text("-");
-		});*/
 		
 		    $(".view-details-btn").click(function () {
 		        // Get data attributes from button
@@ -62,9 +41,9 @@
 			    pageNumber: 0,
 			    pageSize: 100000
 			};
-
+			console.log('inputParams : ' + JSON.stringify(inputParams));
 		    $.ajax({
-		        url: '../adminPanelRest/getAllPGList',
+		        url: '../pgFinderRest/getAllPGList',
 		        method: 'POST',
 		        data: JSON.stringify(inputParams),
 		        contentType: 'application/json',
@@ -72,13 +51,16 @@
 		        beforeSend: function () {
 		            $('#downloadExcel').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Downloading...');
 		        },
-		        success: function (response) {
-					if (response.result && response.result.content) {
-					    exportDataToExcel(response.result.content);
-					} else {
-					    showAlert('Error', 'No data available for export');
-					}
-		        },
+				success: function (response) {
+				    console.log('response: ' + JSON.stringify(response));
+
+				    if (response.data && response.data.content) {
+				        exportDataToExcel(response.data.content);
+				    } else {
+				        showAlert('Error', 'No data available for export');
+				    }
+				},
+
 		        error: function (xhr, status, error) {
 		            console.error("Error fetching data for Excel:", error);
 		            showAlert('Error', 'Failed to fetch data for Excel download');
@@ -89,41 +71,39 @@
 		    });
 		});
 
-		// Helper to export to Excel
 		function exportDataToExcel(dataList) {
 		    var worksheetData = [];
 
 		    // Header row
 		    worksheetData.push([
-				"Sr No.", "PG Name", "Description", "PG Type", "City",
-				"Base Price", "Availability", "Verified", "Amenities",
-				"Rating", "Reviews", "Address", "Latitude", "Longitude", "Place ID"
+		        "Sr No.", "PG Name", "Description", "City",
+		        "Base Price", "Availability", "Reviews", "Address", "Latitude", "Longitude", "Place ID"
 		    ]);
 
 		    // Rows
 		    $.each(dataList, function (index, item) {
 		        worksheetData.push([
-					index + 1,
-					item.name || '',
-					item.shortDescription || '',
-					item.address.city || '',
-					item.basePrice || 0,
-					item.availabilityStatus || '',
-					item.avgRating != null ? item.avgRating : "N/A",
-					item.reviewCount || 0,
-					`${item.address.line1 || ''} ${item.address.line2 || ''}, ${item.address.city || ''}, ${item.address.state || ''}, ${item.address.country || ''}`,
-					item.geoLocation.latitude || '',
-					item.geoLocation.longitude || '',
-					item.geoLocation.placeId || ''
+		            index + 1,
+		            item.name || '',
+		            item.shortDescription || '',
+		            item.address.city || '',
+		            item.basePrice || 0,
+		            item.availabilityStatus || '',
+		            item.reviewCount || 0,
+		            `${item.address.line1 || ''} ${item.address.line2 || ''}, ${item.address.city || ''}, ${item.address.state || ''}, ${item.address.country || ''}`,
+		            item.geoLocation.latitude || '',
+		            item.geoLocation.longitude || '',
+		            item.geoLocation.placeId || ''
 		        ]);
 		    });
 
 		    // SheetJS export
 		    var worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
 		    var workbook = XLSX.utils.book_new();
-		    XLSX.utils.book_append_sheet(workbook, worksheet, "Counsel Info");
+		    XLSX.utils.book_append_sheet(workbook, worksheet, "PG Info");
 		    XLSX.writeFile(workbook, "PG_List.xlsx");
 		}
+
 
 		/* -------------------- Search + Pagination -------------------- */
 		var state = {
