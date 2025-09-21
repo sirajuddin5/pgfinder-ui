@@ -135,7 +135,7 @@
 	        var inputParams = {};
 	        inputParams['name'] = state.name;
 	        inputParams['pgType'] = state.pgType;
-	        inputParams['shortDescription'] = state.shortDescription;
+	        inputParams['city'] = state.city;
 	        inputParams['basePrice'] = state.basePrice;
 	        inputParams['pageNumber'] = state.pageNumber;
 	        inputParams['pageSize'] = state.pageSize;
@@ -225,14 +225,14 @@
 	    }
 
 	    function renderData(response) {
-	        var fetchPGDetails = response.result.content;
-	        console.log('fetchUsersDetails: ' + JSON.stringify(fetchUsersDetails));
+	        var fetchPGDetails = response.data.content;
+	        console.log('fetchPGDetails: ' + JSON.stringify(fetchPGDetails));
 
 	        var temp = '';
 	        var startSerialNo = state.pageNumber * state.pageSize + 1;
 
-			for (let i = 0; i < fetchUsersDetails.length; i++) {
-			    var item = fetchUsersDetails[i];
+			for (let i = 0; i < fetchPGDetails.length; i++) {
+			    var item = fetchPGDetails[i];
 
 			    temp += `<tr>`;
 			    temp += `<td>${startSerialNo++}</td>`;
@@ -271,12 +271,12 @@
 	        $('#pgTable tbody').html(temp);
 
 	        var from = state.pageNumber * state.pageSize + 1;
-	        var to = Math.min((state.pageNumber + 1) * state.pageSize, response.result.totalElements);
+	        var to = Math.min((state.pageNumber + 1) * state.pageSize, response.data.totalElements);
 	        $('#from').html(from);
 	        $('#to').html(to);
 	        $('#currentPage').html(state.pageNumber + 1);
 
-	        var first = response.result.first;
+	        var first = response.data.first;
 			console.log("first:   " + first);
 	        if (first) {
 	            $('#first').addClass('disabled');
@@ -284,7 +284,7 @@
 	            $('#first').removeClass('disabled');
 	        }
 
-	        var last = response.result.last;
+	        var last = response.data.last;
 	        console.log("last:   " + last);
 	        if (last) {
 	            $('#last').addClass('disabled');

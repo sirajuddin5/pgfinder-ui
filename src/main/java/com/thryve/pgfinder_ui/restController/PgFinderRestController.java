@@ -118,12 +118,14 @@ public class PgFinderRestController {
 
           APIResponse response = new APIResponse();
           String name = requestParams.get("name") != null ? requestParams.get("name").toString() : ""; System.out.println("PGname :   " + name);
+          String city = requestParams.get("city") != null ? requestParams.get("city").toString() : ""; System.out.println("city :   " + city);
 
           String token = (String) session.getAttribute("token");
         
           FetchAPIRequest fetchAPIRequest = new FetchAPIRequest();
           List<Filter> filterList = new ArrayList<>();
           if(name.length() > 0)filterList.add(new Filter().setKey("name").setValue(name).setOperation(Filter.Operation.LIKE)); 
+          if(city.length() > 0)filterList.add(new Filter().setKey("address.city").setValue(city).setOperation(Filter.Operation.LIKE)); 
   
           System.out.println("Filter List:   " + filterList);
           fetchAPIRequest.setFilterList(filterList);
