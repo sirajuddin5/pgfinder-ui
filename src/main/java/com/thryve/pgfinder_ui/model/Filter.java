@@ -15,14 +15,33 @@ public class Filter {
     private String joinObject;
     private JoinOperation joinOperation;
 
+    // --- Enum for normal operations ---
     public enum Operation {
-        EQUAL, DATE_EQUAL, DATE_BETWEEN, NOT_EQUAL, LIKE, IN, GREATER_THAN, LESS_THAN, BETWEEN, JOIN,DATE_GREATER_THAN_EQUAL_TO
+        EQUAL,
+        DATE_EQUAL,
+        DATE_BETWEEN,
+        NOT_EQUAL,
+        LIKE,
+        IN,
+        GREATER_THAN,
+        LESS_THAN,
+        BETWEEN,
+        JOIN,
+        DATE_GREATER_THAN_EQUAL_TO
     }
 
+    // --- Enum for join operations ---
     public enum JoinOperation {
-        EQUAL, DATE_EQUAL, LIKE, BETWEEN, DATE_GREATER_THAN_EQUAL_TO, DATE_LESS_THAN, DATE_BETWEEN
+        EQUAL,
+        DATE_EQUAL,
+        LIKE,
+        BETWEEN,
+        DATE_GREATER_THAN_EQUAL_TO,
+        DATE_LESS_THAN,
+        DATE_BETWEEN
     }
 
+    // --- Fluent setters for chaining ---
     public Filter setKey(String key) {
         this.key = key;
         return this;
@@ -32,12 +51,19 @@ public class Filter {
         this.value = value;
         return this;
     }
-    
-   
 
     public Filter setOperation(Operation operation) {
         this.operation = operation;
         return this;
     }
 
+    public Filter setJoinObject(String joinObject) {
+        this.joinObject = joinObject;
+        return this;
+    }
+
+    public Filter setJoinOperation(JoinOperation joinOperation) {
+        this.joinOperation = joinOperation;
+        return this;
+    }
 }

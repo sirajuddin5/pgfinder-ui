@@ -6,16 +6,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PG Finder - Find Your Perfect Stay</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="css/fetchPG.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="css/fetchPG.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
-
-        <!-- Header -->
+<!-- Header -->
         <div class="header">
             <div class="logo">PG Finder</div>
             <div class="tagline">Find your perfect paying guest accommodation</div>
@@ -94,7 +94,7 @@
         </div>
 
         <!-- Loading Indicator -->
-        <div class="loading" id="loading">
+        <div class="loading" id="loading" style="display:none;">
             <div class="spinner"></div>
             <div>Searching for PGs...</div>
         </div>
@@ -104,7 +104,6 @@
             <c:choose>
                 <c:when test="${not empty fetchUsersDataContentList}">
                     <c:forEach var="pg" items="${fetchUsersDataContentList}">
-                        <!-- ✅ Added data-gender here -->
                         <div class="pg-card" data-gender="${pg.pgType}">
                             <div class="pg-image">🏠</div>
                             <div class="pg-content">
@@ -137,62 +136,38 @@
                                     </span>
                                     <span><c:out value="${pg.avgRating != null ? pg.avgRating : 'N/A'}"/></span>
                                 </div>
-                                <div class="pg-amenities">
+                                <%-- <div class="pg-amenities">
                                     <c:forEach var="amenity" items="${pg.amenities}">
                                         <span class="amenity-tag">${amenity}</span>
                                     </c:forEach>
-                                </div>
-                                <!-- ✅ View Details button -->
-                                <%-- <button class="view-btn" onclick="viewPG('${pg.id}')">View Details</button> --%>
+                                </div> --%>
                                 
-<button type="button" class="view-btn" 
-        data-toggle="modal" 
-        data-target="#viewDetailsModal"
-        data-pgname="${pg.name}"
-        data-description="${pg.shortDescription}"
-        data-gender="${pg.pgType}"
-        data-city="${pg.address.city}"
-        data-baseprice="${pg.basePrice}"
-        data-address="${pg.address.line1}, ${pg.address.line2}, ${pg.address.city}, ${pg.address.state}, ${pg.address.country}"
-       >
-    View Details
-</button>
+                                <button type="button" class="view-btn btn btn-primary"
+								        data-bs-toggle="modal"
+								        data-bs-target="#viewDetailsModal"
+								        data-id="${pg.id}"
+								        data-pgname="${pg.name}"
+								        data-description="${pg.shortDescription}"
+								        data-gender="${pg.pgType}"
+								        data-city="${pg.address.city}"
+								        data-baseprice="${pg.basePrice}"
+								        data-availability="${pg.availabilityStatus}"
+								        data-verified="${pg.verified}"
+								        data-address="${pg.address.line1}, ${pg.address.line2}, ${pg.address.city}, ${pg.address.state}, ${pg.address.country}, ${pg.address.postalCode}"
+								        data-latitude="${pg.geoLocation.latitude}"
+								        data-longitude="${pg.geoLocation.longitude}"
+								        data-placeid="${pg.geoLocation.placeId}"
+								        data-amenities="<c:forEach var='a' items='${pg.amenities}'>${a}, </c:forEach>"
+								        data-rating="${pg.avgRating != null ? pg.avgRating : 'N/A'}"
+								        data-reviews="${pg.reviewCount}">
+								    View Details
+								</button>
 
-<div class="modal fade" id="viewDetailsModal" tabindex="-1" role="dialog" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">PG Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <table class="table table-bordered">
-                    <tr><th>PG Name</th><td id="modalPGName"></td></tr>
-                    <tr><th>Description</th><td id="modalDescription"></td></tr>
-                    <tr><th>Type (Gender)</th><td id="modalGender"></td></tr>
-                    <tr><th>City</th><td id="modalCity"></td></tr>
-                    <tr><th>Base Price</th><td id="modalBasePrice"></td></tr>
-                    <tr><th>Address</th><td id="modalAddress"></td></tr>
-                    <tr><th>Amenities</th><td id="modalAmenities"></td></tr>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-                                
                             </div>
                         </div>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
-                    <!-- ✅ Show this only if no data -->
                     <div class="no-results" id="noResults">
                         <i class="fas fa-home"></i>
                         <div>No PGs found matching your criteria</div>
@@ -201,14 +176,50 @@
                 </c:otherwise>
             </c:choose>
         </div>
+    </div>
 
+    <!-- View Details Modal (same as pgList) -->
+    <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="viewDetailsModalLabel">PG Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> <span id="modalPgName">-</span></p>
+                            <p><strong>Description:</strong> <span id="modalDescription">-</span></p>
+                            <p><strong>PG Type:</strong> <span id="modalPgType">-</span></p>
+                            <p><strong>Base Price:</strong> ₹<span id="modalBasePrice">-</span></p>
+                            <p><strong>Availability:</strong> <span id="modalAvailability">-</span></p>
+                            <p><strong>Verified:</strong> <span id="modalVerified">-</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Full Address:</strong> <span id="modalAddress">-</span></p>
+                            <p><strong>Latitude:</strong> <span id="modalLatitude">-</span></p>
+                            <p><strong>Longitude:</strong> <span id="modalLongitude">-</span></p>
+                            <p><strong>Place ID:</strong> <span id="modalPlaceId">-</span></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                        <p><strong>Amenities:</strong> <span id="modalAmenities">-</span></p>
+                        <p><strong>Rating:</strong> <span id="modalRating">-</span> ⭐</p>
+                        <p><strong>Total Reviews:</strong> <span id="modalReviews">-</span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/fetchPG.js"></script>
-
 </body>
 </html>

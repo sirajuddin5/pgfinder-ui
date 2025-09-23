@@ -154,7 +154,7 @@
 	        var inputParams = {};
 			inputParams['name'] = state.name;
 			inputParams['pgType'] = state.pgType;
-			inputParams['shortDescription'] = state.shortDescription;
+			inputParams['city'] = state.city;
 			inputParams['basePrice'] = state.basePrice;
 			inputParams['pageNumber'] = state.pageNumber;
 			inputParams['pageSize'] = state.pageSize;
@@ -172,7 +172,7 @@
 	        var inputParams = {};
 			inputParams['name'] = state.name;
 			inputParams['pgType'] = state.pgType;
-			inputParams['shortDescription'] = state.shortDescription;
+			inputParams['city'] = state.city;
 			inputParams['basePrice'] = state.basePrice;
 			inputParams['pageNumber'] = state.pageNumber;
 			inputParams['pageSize'] = state.pageSize;
@@ -189,7 +189,7 @@
 	        var inputParams = {};
 			inputParams['name'] = state.name;
 			inputParams['pgType'] = state.pgType;
-			inputParams['shortDescription'] = state.shortDescription;
+			inputParams['city'] = state.city;
 			inputParams['basePrice'] = state.basePrice;
 			inputParams['pageNumber'] = state.pageNumber;
 			inputParams['pageSize'] = state.pageSize;

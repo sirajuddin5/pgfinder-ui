@@ -110,36 +110,51 @@ public class PgFinderRestController {
 	    return ResponseEntity.ok(response);
 	}
 
-    @PostMapping("/getAllPGList")
-    public APIResponse activeCounselList(@RequestBody Map<String, Object> requestParams) {    	
-    	  System.out.println("requestParams : " + requestParams);
-          int pageSize = requestParams.get("pageSize") != null ? Integer.parseInt(requestParams.get("pageSize").toString()): 10; 
-          int pageNum = requestParams.get("pageNumber") != null? Integer.parseInt(requestParams.get("pageNumber").toString()): 0; 
+	@PostMapping("/getAllPGList")
+	public APIResponse getAllPGList(@RequestBody Map<String, Object> requestParams) {
+	    System.out.println("requestParams : " + requestParams);
+	    int pageSize = requestParams.get("pageSize") != null ? Integer.parseInt(requestParams.get("pageSize").toString()) : 10;
+	    int pageNum = requestParams.get("pageNumber") != null ? Integer.parseInt(requestParams.get("pageNumber").toString()) : 0;
 
-          APIResponse response = new APIResponse();
-          String name = requestParams.get("name") != null ? requestParams.get("name").toString() : ""; System.out.println("PGname :   " + name);
-          String city = requestParams.get("city") != null ? requestParams.get("city").toString() : ""; System.out.println("city :   " + city);
+	    APIResponse response = new APIResponse();
+	    String name = requestParams.get("name") != null ? requestParams.get("name").toString() : "";
+	    System.out.println("PGname : " + name);
+	    String city = requestParams.get("city") != null ? requestParams.get("city").toString() : "";
+	    System.out.println("city : " + city);
+	    
+	    String basePrice = requestParams.get("basePrice") != null ? requestParams.get("basePrice").toString() : "";
 
-          String token = (String) session.getAttribute("token");
-        
-          FetchAPIRequest fetchAPIRequest = new FetchAPIRequest();
-          List<Filter> filterList = new ArrayList<>();
-          if(name.length() > 0)filterList.add(new Filter().setKey("name").setValue(name).setOperation(Filter.Operation.LIKE)); 
-          if(city.length() > 0)filterList.add(new Filter().setKey("address.city").setValue(city).setOperation(Filter.Operation.LIKE)); 
-  
-          System.out.println("Filter List:   " + filterList);
-          fetchAPIRequest.setFilterList(filterList);
-          fetchAPIRequest.setGlobalOperator(GlobalOperator.AND);
-          PageRequestDTO pageRequestDTO = new PageRequestDTO();
-          pageRequestDTO.setPageNumber(pageNum);
-          pageRequestDTO.setPageSize(pageSize);
-          pageRequestDTO.setSort("ASC");
-          pageRequestDTO.setSortByColumn("id");
-          fetchAPIRequest.setPageRequestDTO(pageRequestDTO);
-          
-          response = PgFinderService.getAllPG(fetchAPIRequest, token);          
-          System.out.println("response: " + response);
-          return response;
-    }
+	    String token = (String) session.getAttribute("token");
+
+	    FetchAPIRequest fetchAPIRequest = new FetchAPIRequest();
+	    List<Filter> filterList = new ArrayList<>();
+
+	    if (name.length() > 0) {filterList.add(new Filter().setKey("name").setValue(name).setOperation(Filter.Operation.LIKE));}
+	    if (basePrice.length() > 0) {filterList.add(new Filter().setKey("basePrice").setValue(basePrice).setOperation(Filter.Operation.EQUAL));}
+
+	 // Applying the JOIN operation for city as per the Swagger format
+	    if (city.length() > 0) {
+	        filterList.add(new Filter()
+	            .setKey("address.city").setValue(city).setOperation(Filter.Operation.EQUAL).setJoinObject("address").setJoinOperation(Filter.JoinOperation.EQUAL));
+	    }
+
+
+	    System.out.println("Filter List: " + filterList);
+	    fetchAPIRequest.setFilterList(filterList);
+	    fetchAPIRequest.setGlobalOperator(GlobalOperator.AND);
+
+	    PageRequestDTO pageRequestDTO = new PageRequestDTO();
+	    pageRequestDTO.setPageNumber(pageNum);
+	    pageRequestDTO.setPageSize(pageSize);
+	    pageRequestDTO.setSort("ASC");
+	    pageRequestDTO.setSortByColumn("id");
+
+	    fetchAPIRequest.setPageRequestDTO(pageRequestDTO);
+
+	    response = PgFinderService.getAllPG(fetchAPIRequest, token);
+	    System.out.println("response: " + response);
+	    return response;
+	}
+
 
 }
