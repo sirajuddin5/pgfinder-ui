@@ -4,14 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Portfolio</title>
+    <title>Add Property Details</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/addNewProperty.css">
-    
 </head>
 <body>
-  <input type="hidden" value="${token}" id="token">
-  <input type="hidden" value="${response.data.id}" id="ownerId">
+    <input type="hidden" value="${token}" id="token">
+    <input type="hidden" value="${response.data.id}" id="ownerId">
 
     <div class="form-modal" id="addPropertyModal">
         <div class="form-container">
@@ -26,36 +25,31 @@
                         <label for="name">Property Name *</label>
                         <input type="text" id="propertyName" name="name" required>
                     </div>
-
                     <div class="form-group">
                         <label for="pgType">Property Type *</label>
                         <select id="pgType" name="pgType" required>
                             <option value="">Select Type</option>
                             <option value="ENTIRE_PROPERTY">Entire Property</option>
-                            <option value="SHARED_ROOMS">Shared Rooms</option>
-                            <option value="PRIVATE_ROOMS">Private Rooms</option>
+                            <option value="SINGLE_ROOM">Single Room</option>
+                            <option value="SEAT_IN_DORM">Seat in Dorms</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="genderPreference">Gender Preference</label>
                         <select id="genderPreference" name="genderPreference">
                             <option value="ANY">Any</option>
-                            <option value="MALE">Male</option>
-                            <option value="FEMALE">Female</option>
+                            <option value="MALE_ONLY">Male</option>
+                            <option value="FEMALE_ONLY">Female</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="basePrice">Base Price *</label>
                         <input type="number" id="basePrice" name="basePrice" min="0" required>
                     </div>
-
                     <div class="form-group full-width">
                         <label for="shortDescription">Short Description</label>
                         <input type="text" id="shortDescription" name="shortDescription" maxlength="100">
                     </div>
-
                     <div class="form-group full-width">
                         <label for="description">Full Description</label>
                         <textarea id="description" name="description" rows="4"></textarea>
@@ -150,50 +144,50 @@
                     </div>
                 </div>
 
-	                <!-- Rooms Section -->
-	                <h4 style="margin: 24px 0 16px; color: #1f2937; font-size: 18px;">Rooms</h4>
-	                <div id="roomsContainer">
-	                    <div class="room-section">
-	                        <div class="room-header">
-	                            <h5 class="room-title">Room 1</h5>
-	                        </div>
-	                        <div class="form-grid">
-	                            <div class="form-group">
-	                                <label>Room Title *</label>
-	                                <input type="text" name="rooms[0].title" required>
-	                            </div>
-	                            <div class="form-group">
-	                                <label>Room Type *</label>
-	                                <select name="rooms[0].roomType" required>
-	                                    <option value="">Select Type</option>
-	                                    <option value="SINGLE">Single</option>
-	                                    <option value="DOUBLE">Double</option>
-	                                    <option value="TRIPLE">Triple</option>
-	                                    <option value="DORMITORY">Dormitory</option>
-	                                </select>
-	                            </div>
-	                            <div class="form-group">
-	                                <label>Capacity *</label>
-	                                <input type="number" name="rooms[0].capacity" min="1" required>
-	                            </div>
-	                            <div class="form-group">
-	                                <label>Price (â¹) *</label>
-	                                <input type="number" name="rooms[0].price" min="0" required>
-	                            </div>
-	                            <div class="form-group">
-	                                <label>Available Units</label>
-	                                <input type="number" name="rooms[0].availableUnits" min="0" value="1">
-	                            </div>
-	                            <div class="form-group full-width">
-	                                <label>Room Description</label>
-	                                <textarea name="rooms[0].description" rows="3"></textarea>
-	                            </div>
-	                        </div>
-	                    </div>
-	                </div>
-	                <button type="button" class="add-room-btn" onclick="addRoom()">
-	                    <i class="fas fa-plus"></i> Add Another Room
-	                </button>
+                <%-- ROOMS --%>
+                <h4 style="margin: 24px 0 16px; color: #1f2937; font-size: 18px;">Rooms</h4>
+                <div id="roomsContainer">
+                    <div class="room-section">
+                        <div class="room-header">
+                            <h5 class="room-title">Room 1</h5>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Room Title *</label>
+                                <input type="text" name="rooms[0].title" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Room Type *</label>
+                                <select name="rooms[0].roomType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="SINGLE">Single</option>
+                                    <option value="DOUBLE">Double</option>
+                                    <option value="TRIPLE">Triple</option>
+                                    <option value="DORM_BED">Dormitory</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Capacity *</label>
+                                <input type="number" name="rooms[0].capacity" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Price (â¹) *</label>
+                                <input type="number" name="rooms[0].price" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Available Units</label>
+                                <input type="number" name="rooms[0].availableUnits" min="0" value="1">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Room Description</label>
+                                <textarea name="rooms[0].description" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="add-room-btn" onclick="addRoom()">
+                    <i class="fas fa-plus"></i> Add Another Room
+                </button>
 
                 <%-- TAGS --%>
                 <h4 class="section-heading">Tags</h4>
@@ -205,29 +199,26 @@
                 <%-- FORM ACTIONS --%>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeAddPropertyForm()">Cancel</button>
-                    <button type="submit" id="submitProperty"class="btn btn-success">
+                    <button type="submit" id="submitProperty" class="btn btn-success">
                         <i class="fas fa-save"></i> Save Property
                     </button>
                 </div>
             </form>
-                                                                <!-- ✅ Modal Alert Box -->
-													<div id="alert" style="display:none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
-													                        background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-													                        width: 300px; z-index: 9999; padding: 20px; text-align: center;">
-													    
-													    <h4 class="modal-title" style="margin-bottom: 10px; color: #222;"></h4>
-													    <p class="modal-body" style="margin-bottom: 20px;"></p>
-													    
-													    <button class="close-modal" style="padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
-													        OK
-													    </button>
-													</div>
-            
+
+            <!-- ✅ Modal Alert Box -->
+            <div id="alert" style="display:none; position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
+                                    background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+                                    width: 300px; z-index: 9999; padding: 20px; text-align: center;">
+                <h4 class="modal-title" style="margin-bottom: 10px; color: #222;"></h4>
+                <p class="modal-body" style="margin-bottom: 20px;"></p>
+                <button class="close-modal" style="padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    OK
+                </button>
+            </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/addNewProperty.js"></script>
-    
 </body>
 </html>

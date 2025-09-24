@@ -35,12 +35,12 @@
                     <label class="filter-label">Location</label>
                     <select class="filter-select" id="locationFilter">
                         <option value="">All Locations</option>
-                        <option value="koramangala">Koramangala</option>
-                        <option value="btm-layout">BTM Layout</option>
-                        <option value="whitefield">Whitefield</option>
-                        <option value="marathahalli">Marathahalli</option>
-                        <option value="hsr-layout">HSR Layout</option>
-                        <option value="electronic-city">Electronic City</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Gurugram">Gurugram</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Chennai">Chennai</option>
+                        <option value="electronicCity">NOIDA Electronic City</option>
                     </select>
                 </div>
 
@@ -54,14 +54,12 @@
                         <option value="20000">Under ₹20,000</option>
                     </select>
                 </div>
-
                 <div class="filter-group">
                     <label class="filter-label">Gender</label>
                     <select class="filter-select" id="genderFilter">
-                        <option value="">Any</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="unisex">Unisex</option>
+                        <option value="ANY">Any</option>
+                        <option value="MALE_ONLY">Male</option>
+                        <option value="FEMALE_ONLY">Female</option>
                     </select>
                 </div>
 

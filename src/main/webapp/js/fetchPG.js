@@ -45,34 +45,34 @@ $(document).ready(function () {
 });
 
 function filterAndSortPGs() {
-    let searchTerm = $('#searchInput').val().toLowerCase().trim();
-    let locationFilter = $('#locationFilter').val().toLowerCase();
-    let rentFilter = parseInt($('#rentFilter').val()) || null;
-    let genderFilter = $('#genderFilter').val().toLowerCase();
-    let amenityFilter = $('#amenityFilter').val().toLowerCase();
-    let sortBy = $('#sortBy').val();
+    var searchTerm = $('#searchInput').val().toLowerCase().trim();
+    var locationFilter = $('#locationFilter').val().toLowerCase();
+    var rentFilter = parseInt($('#rentFilter').val()) || null;
+    var genderFilter = $('#genderFilter').val().toLowerCase();
+    var amenityFilter = $('#amenityFilter').val().toLowerCase();
+    var sortBy = $('#sortBy').val();
 
-    let visibleCount = 0;
+    var visibleCount = 0;
 
     $('.pg-card').each(function () {
-        let $card = $(this);
+        var $card = $(this);
 
-        let name = $card.find('.pg-title').text().toLowerCase();
-        let location = $card.find('.pg-location').text().toLowerCase();
-        let rentText = $card.find('.pg-rent').text().replace(/[^\d]/g, '');
-        let rent = parseInt(rentText) || 0;
-        let gender = ($card.data('gender') || '').toLowerCase();
-        let amenities = [];
+        var name = $card.find('.pg-title').text().toLowerCase();
+        var location = $card.find('.pg-location').text().toLowerCase();
+        var rentText = $card.find('.pg-rent').text().replace(/[^\d]/g, '');
+        var rent = parseInt(rentText) || 0;
+        var gender = ($card.data('gender') || '').toLowerCase();
+        var amenities = [];
 
         $card.find('.amenity-tag').each(function () {
             amenities.push($(this).text().toLowerCase());
         });
 
-        let matchesSearch = !searchTerm || name.includes(searchTerm) || location.includes(searchTerm);
-        let matchesLocation = !locationFilter || location.includes(locationFilter);
-        let matchesRent = !rentFilter || rent <= rentFilter;
-        let matchesGender = !genderFilter || gender === genderFilter || gender === 'unisex';
-        let matchesAmenity = !amenityFilter || amenities.includes(amenityFilter);
+        var matchesSearch = !searchTerm || name.includes(searchTerm) || location.includes(searchTerm);
+        var matchesLocation = !locationFilter || location.includes(locationFilter);
+        var matchesRent = !rentFilter || rent <= rentFilter;
+        var matchesGender = !genderFilter || gender === genderFilter || gender === 'unisex';
+        var matchesAmenity = !amenityFilter || amenities.includes(amenityFilter);
 
         if (matchesSearch && matchesLocation && matchesRent && matchesGender && matchesAmenity) {
             $card.show();
@@ -94,17 +94,17 @@ function filterAndSortPGs() {
 }
 
 function sortCards(sortBy) {
-    let $container = $('#pgListings');
-    let $cards = $container.find('.pg-card:visible');
+    var $container = $('#pgListings');
+    var $cards = $container.find('.pg-card:visible');
 
     $cards.sort(function (a, b) {
-        let $a = $(a), $b = $(b);
+        var $a = $(a), $b = $(b);
 
-        let rentA = parseInt($a.find('.pg-rent').text().replace(/[^\d]/g, '')) || 0;
-        let rentB = parseInt($b.find('.pg-rent').text().replace(/[^\d]/g, '')) || 0;
+        var rentA = parseInt($a.find('.pg-rent').text().replace(/[^\d]/g, '')) || 0;
+        var rentB = parseInt($b.find('.pg-rent').text().replace(/[^\d]/g, '')) || 0;
 
-        let ratingA = parseFloat($a.find('.pg-rating span:last').text()) || 0;
-        let ratingB = parseFloat($b.find('.pg-rating span:last').text()) || 0;
+        var ratingA = parseFloat($a.find('.pg-rating span:last').text()) || 0;
+        var ratingB = parseFloat($b.find('.pg-rating span:last').text()) || 0;
 
         switch (sortBy) {
             case 'rent-low':
